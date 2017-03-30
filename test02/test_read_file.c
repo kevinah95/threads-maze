@@ -23,12 +23,12 @@ int main(int argc, char *argv[])
 
     fclose(f);
     //bytes[strcspn(bytes, "\n")] = ' ';
-    char* temp = strstr(bytes, "\n");
+    char* temp;
     // Remove \n.
     while ((temp = strstr(bytes, "\n")) != NULL) {
     // Len is the length of the string, from the ampersand \n, including the \n.
         int len = strlen(bytes);
-        memmove(temp, temp + 1, len);
+        memcpy(temp, temp + 1, len);
     }
     printf("String: ");
     printf("%s",bytes);
@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
     printf("%d",strlen(bytes));
 
 
+    free(bytes);
     return 0;
     /*free(temp); // free allocated memory
     free(bytes); // free allocated memory*/
