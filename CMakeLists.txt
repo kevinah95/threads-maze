@@ -5,7 +5,7 @@ set(CMAKE_C_STANDARD 99)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-set(SOURCE_FILES examples/fileRead.c)
+set(SOURCE_FILES test02/test_read_file.c)
 
 add_executable(threads-maze ${SOURCE_FILES})
 target_link_libraries(threads-maze Threads::Threads)

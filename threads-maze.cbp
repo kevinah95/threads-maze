@@ -84,7 +84,7 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/kevinah95/CLionProjects/threads-maze/examples/fileRead.c">
+		<Unit filename="/home/kevinah95/CLionProjects/threads-maze/test02/test_read_file.c">
 			<Option target="threads-maze"/>
 		</Unit>
 		<Unit filename="/home/kevinah95/CLionProjects/threads-maze/CMakeLists.txt">
