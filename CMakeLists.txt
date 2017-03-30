@@ -6,6 +6,6 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 
-set(SOURCE_FILES examples/hello-pthread.c)
+set(SOURCE_FILES examples/fileRead.c)
 add_executable(threads-maze ${SOURCE_FILES})
 target_link_libraries(threads-maze Threads::Threads)
