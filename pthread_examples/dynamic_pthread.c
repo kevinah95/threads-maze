@@ -9,7 +9,10 @@
 
 
 #define MILLISECOND 1000
-#define SECOND 100*MILLISECOND //1000*MILLISECOND <- One Second
+#define SECOND 1*MILLISECOND //1000*MILLISECOND <- One Second
+
+#define clear() printf("\033[H\033[J")
+#define gotoxy(x,y) printf("\033[%d;%dH", (x), (y))
 
 typedef struct Threads {
     pthread_t *threads;
@@ -63,6 +66,10 @@ void* doSomeThing(int *pId)
     return NULL;
 }
 
+void goto2xy(int x,int y){
+printf("%c[%d;%df",0x1B,y,x);
+}
+
 
 
 int main(void)
@@ -110,7 +117,23 @@ int main(void)
 
     pthread_mutex_destroy(&lock);
 
+    printf("-----------------...\n");
+    printf("-----------------...\n");
+    int number;
 
-
+    clear();
+    printf(
+            "Enter your number in the box below\n"
+                    "+-----------------+\n"
+                    "|                 |\n"
+                    "+-----------------+\n"
+    );
+    //printf("\033[2A"); // Move up X lines;
+    //printf("\033[1C"); // Move right X column;
+    //scanf("%d", &number);
+    //printf("asdasd");
+    printf("Hello, I am going to use gotoxy");
+    goto2xy(5, 4);
+    printf("123");
     return 0;
 }

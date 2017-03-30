@@ -57,8 +57,7 @@ int main(void)
     pthread_join(tid[1], NULL);
     pthread_mutex_destroy(&lock);
 
-    printf("-----------------");
-    printf("%c[2K", 27);
+
 
     return 0;
 }
