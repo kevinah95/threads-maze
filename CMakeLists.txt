@@ -4,7 +4,6 @@ project(threads-maze)
 set(CMAKE_C_STANDARD 99)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-include_directories(${CURSES_INCLUDE_DIR})
 
 set(SOURCE_FILES test03/test_read_file.c)
 

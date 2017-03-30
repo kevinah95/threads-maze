@@ -9,7 +9,7 @@
 #define MILLISECOND 1000
 #define SECOND 100*MILLISECOND //1000*MILLISECOND <- One Second
 
-#define PRINTC(c, f, s0, s1) printf ("\033[%dm" f "\033[0m", 30 + c, s0,s1)
+#define PRINTC(c, f, s0) printf ("\033[%dm" f "\033[0m", 30 + c, s0)
 #define clear() printf("\033[H\033[J")
 
 
@@ -66,6 +66,7 @@ void move_down(char *maze, int width, int height, int x_pos, int y_pos) {
     int left = (x_pos > 0) ? (x_pos - 1) : x_pos;
     int right = (x_pos < width - 1) ? (x_pos + 1) : x_pos;
     //-------------
+    int rand_num =  rand_interval(0,7);
     //printf("\n");
     for (y; y < height; y++) {
         //printf("%c", maze[x + width * y]);
@@ -74,7 +75,7 @@ void move_down(char *maze, int width, int height, int x_pos, int y_pos) {
         if (maze[x + width * y] == ' ') {
             maze[x + width * y] = randomletter;
             gotoxy(x,y);
-            printf("%c",maze[x + width * y]);
+            PRINTC (rand_num, "%c", maze[x + width * y]);
         } else {
             return;
         }
@@ -102,6 +103,7 @@ void move_right(char *maze, int width, int height, int x_pos, int y_pos) {
     int up = (y_pos > 0) ? (y_pos - 1) : y_pos;
     int down = (y_pos < height - 1) ? (y_pos + 1) : y_pos;
     //-------------
+    int rand_num =  rand_interval(0,7);
     //printf("\n");
     for (x; x < width; x++) {
         //printf("%c", maze[x + width * y]);
@@ -109,7 +111,7 @@ void move_right(char *maze, int width, int height, int x_pos, int y_pos) {
         if (maze[x + width * y] == ' ') {
             maze[x + width * y] = randomletter;
             gotoxy(x,y);
-            printf("%c",maze[x + width * y]);
+            PRINTC (rand_num, "%c", maze[x + width * y]);
         } else {
             //show_maze(maze, 8, 8);
             
@@ -137,6 +139,7 @@ void move_up(char *maze, int width, int height, int x_pos, int y_pos) {
     int left = (x_pos > 0) ? (x_pos - 1) : x_pos;
     int right = (x_pos < width - 1) ? (x_pos + 1) : x_pos;
     //-------------
+    int rand_num =  rand_interval(0,7);
     //printf("\n");
     for (unsigned y = y_pos+1; y-- > 0;) {
         //printf("%c", maze[x + width * y]);
@@ -145,7 +148,7 @@ void move_up(char *maze, int width, int height, int x_pos, int y_pos) {
         if (maze[x + width * y] == ' ') {
             maze[x + width * y] = randomletter;
             gotoxy(x,y);
-            printf("%c",maze[x + width * y]);
+            PRINTC (rand_num, "%c", maze[x + width * y]);
         } else {
             //show_maze(maze, 8, 8);
 
@@ -173,6 +176,7 @@ void move_left(char *maze, int width, int height, int x_pos, int y_pos) {
     int up = (y_pos > 0) ? (y_pos - 1) : y_pos;
     int down = (y_pos < height - 1) ? (y_pos + 1) : y_pos;
     //-------------
+    int rand_num =  rand_interval(0,7);
     //printf("\n");
     for (unsigned x = x_pos+1; x-- > 0;) {
         //printf("%c", maze[x + width * y]);
@@ -180,7 +184,7 @@ void move_left(char *maze, int width, int height, int x_pos, int y_pos) {
         if (maze[x + width * y] == ' ') {
             maze[x + width * y] = randomletter;
             gotoxy(x,y);
-            printf("%c",maze[x + width * y]);
+            PRINTC (rand_num, "%c", maze[x + width * y]);
         } else {
             //show_maze(maze, 8, 8);
 
