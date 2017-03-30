@@ -17,8 +17,6 @@ int main(int argc, char **argv) {
         printf("%c",c);
     }
 
-    if(!1)
-        printf("dasd");
 
     fclose(f);
     return 0;
