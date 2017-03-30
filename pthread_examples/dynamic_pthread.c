@@ -8,26 +8,8 @@
 
 
 
-
-
-void* doSomeThing(int *pId)
-{
-    unsigned long i = 0;
-    //pthread_t id = pthread_self();
-
-    for(i=0; i<(0xF);i++){
-        printf("%d from %d ",i,pId);
-        printf("\n");
-        sleep(1);
-    };
-
-
-    printf("\nThread %d processing done\n",pId);
-
-
-
-    return NULL;
-}
+#define MILLISECOND 1000
+#define SECOND 100*MILLISECOND //1000*MILLISECOND <- One Second
 
 typedef struct Threads {
     pthread_t *threads;
@@ -35,11 +17,57 @@ typedef struct Threads {
 } thread_pool;
 
 thread_pool *tids;
+
+pthread_mutex_t lock;
+
+
+void* doSomeThing(int *pId)
+{
+    pthread_mutex_lock(&lock);
+    unsigned long i = 0;
+    //pthread_t id = pthread_self();
+
+    /*for(i=0; i<(0xF);i++){
+        printf("%d from %d ",i,pId);
+        printf("\n");
+        fflush(stdout);
+        usleep(SECOND);
+    };*/
+
+
+    const char progress[] = "|/-\\";
+
+    for (i = 0; i < 100; i += 10) {
+        printf("Processing: %3d%%\r",i); /* \r returns the caret to the line start */
+        fflush(stdout);
+        usleep(SECOND);
+    }
+    printf("\n"); /* goes to the next line */
+    fflush(stdout);
+
+    printf("Processing: ");
+    for (i = 0; i < 100; i += 10) {
+        printf("%c\b", progress[(i/10)%sizeof(progress)]); /* \b goes one back */
+        fflush(stdout);
+        usleep(SECOND);
+    }
+    printf("\n"); /* goes to the next line */
+    fflush(stdout);
+
+
+    printf("\nThread %d processing done\n",pId);
+
+
+    pthread_mutex_unlock(&lock);
+
+    return NULL;
+}
+
+
+
 int main(void)
 {
-
-
-    int i = 0;  
+    int i = 0;
     int err;
 
     int thread_counter=0;
@@ -47,6 +75,13 @@ int main(void)
     tids=(thread_pool *)malloc(1 * sizeof(thread_pool ));
     tids->threads=(pthread_t *)malloc(1 * sizeof(pthread_t ));
     tids->thread_count = 0;
+    //MUTEX
+    if (pthread_mutex_init(&lock, NULL) != 0)
+    {
+        printf("\n mutex init failed\n");
+        return 1;
+    }
+    //
     while(i < 9)
     {
         if(tids->thread_count!=0)
@@ -73,6 +108,7 @@ int main(void)
         i++;
     }
 
+    pthread_mutex_destroy(&lock);
 
 
 

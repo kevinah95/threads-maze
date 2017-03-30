@@ -3,6 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
+
+
+#define MILLISECOND 1000
+#define SECOND 1000*MILLISECOND //1000*MILLISECOND <- One Second
 
 #define PRINTC(c, f, s0, s1) printf ("\033[%dm" f "\033[0m", 30 + c, s0,s1)
 
@@ -31,7 +36,8 @@ void show_maze(const char *maze, int width, int height) {
         //int rand_num =  rand_interval(0,7);
         for (x = 0; x < width; x++) {
             printf("%c", maze[x + width * y]);
-
+            fflush(stdout);
+            usleep(SECOND);
             /*switch(maze[y * width + x]) {
                 case '#':  printf("[]");  break;
                 case ' ':  printf("  ");  break;
@@ -41,6 +47,7 @@ void show_maze(const char *maze, int width, int height) {
         }
         printf("\n");//each row
     }
+
     printf("\n");
 }
 
@@ -56,10 +63,12 @@ void move_down(char *maze, int width, int height, int x_pos, int y_pos) {
     for (y; y < height; y++) {
         //printf("%c", maze[x + width * y]);
         //printf("\n");
+
         if (maze[x + width * y] == ' ') {
             maze[x + width * y] = randomletter;
-
         } else {
+            show_maze(maze, 8, 8);
+
             return;
         }
         char left_flag = maze[left + width * y];
@@ -93,6 +102,8 @@ void move_right(char *maze, int width, int height, int x_pos, int y_pos) {
         if (maze[x + width * y] == ' ') {
             maze[x + width * y] = randomletter;
         } else {
+            show_maze(maze, 8, 8);
+            
             return;
         }
         char up_flag = maze[x + width * up];
@@ -125,6 +136,8 @@ void move_up(char *maze, int width, int height, int x_pos, int y_pos) {
         if (maze[x + width * y] == ' ') {
             maze[x + width * y] = randomletter;
         } else {
+            show_maze(maze, 8, 8);
+            sleep(1);
             return;
         }
         char left_flag = maze[left + width * y];
@@ -156,6 +169,8 @@ void move_left(char *maze, int width, int height, int x_pos, int y_pos) {
         if (maze[x + width * y] == ' ') {
             maze[x + width * y] = randomletter;
         } else {
+            show_maze(maze, 8, 8);
+            sleep(1);
             return;
         }
         char up_flag = maze[x + width * up];
@@ -202,7 +217,7 @@ int main(int argc, char *argv[]) {
     //move_up(bytes, 8, 8, 4, 8); //(x_pos - 1) (y_pos - 1)
     //move_left(bytes, 8, 8, 2, 7); //(x_pos - 1) (y_pos - 1)
     printf("\n");
-    show_maze(bytes, 8, 8);
+    //show_maze(bytes, 8, 8);
     //-------------------------Colors!!
     /*PRINTC (rand_interval(0,7), "%s\n", "bar");
     PRINTC (rand_interval(10,17), "%c", 'a');*/
