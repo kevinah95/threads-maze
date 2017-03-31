@@ -194,8 +194,8 @@ int main(int argc, char *argv[]) {
 
     char *bytes = malloc((pos) * sizeof(char *));
     fscanf(f, "%[^\\n\\r]", bytes);
-    fclose(f);
 
+    fclose(f);
     char *temp;
     // Remove \n.
     while ((temp = strstr(bytes, "\n")) != NULL) {
