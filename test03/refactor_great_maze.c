@@ -11,7 +11,7 @@
 #define _POSIX_BARRIERS_MINE		  #define _POSIX_BARRIERS_MINE
 #endif		  #endi*/
 #define MILLISECOND 1000
-#define SECOND 100*MILLISECOND //1000*MILLISECOND <- One Second
+#define SECOND 1000*MILLISECOND //1000*MILLISECOND <- One Second
 
 #define PRINTC(c, f, s0) printf ("\033[%dm" f "\033[0m", 30 + c, s0)
 #define clear() printf("\033[H\033[J")
@@ -116,11 +116,19 @@ void *move_down(struct thread_args **argp) {
             args->y_pos = y;
             //move_left(&args);
             //pthread_mutex_lock(&lock);
+            //usleep(SECOND);
             tids->threads =(pthread_t *)realloc(tids->threads,sizeof ( pthread_t )*(tids->thread_count+1)) ;
             if(tids==NULL)
                 printf("error with realloc");
 
-            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_left, &args);
+            struct thread_args *args_copy = malloc(sizeof *args);
+            args_copy->maze = args->maze;
+            args_copy->x_pos = args->x_pos;
+            args_copy->y_pos = args->y_pos;
+            args_copy->width = args->width;
+            args_copy->height = args->height;
+            memcpy(args_copy,args,sizeof(args));
+            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_left, &args_copy);
             if (err != 0)
                 printf("\ncan't create thread :[%s]", strerror(err));
             /*else
@@ -139,11 +147,19 @@ void *move_down(struct thread_args **argp) {
             //move_right(&args);
 
             //pthread_mutex_lock(&lock);
+            //usleep(SECOND);
             tids->threads =(pthread_t *)realloc(tids->threads,sizeof ( pthread_t )*(tids->thread_count+1)) ;
             if(tids==NULL)
                 printf("error with realloc");
-
-            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_right, &args);
+            struct thread_args *args_copy = malloc(sizeof *args);
+            memcpy(args_copy,args,sizeof(args));
+            //strncpy(args_copy->maze, args->maze, sizeof(args->maze));
+            args_copy->maze = args->maze;
+            args_copy->x_pos = args->x_pos;
+            args_copy->y_pos = args->y_pos;
+            args_copy->width = args->width;
+            args_copy->height = args->height;
+            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_right, &args_copy);
             if (err != 0)
                 printf("\ncan't create thread :[%s]", strerror(err));
             /*else
@@ -202,8 +218,15 @@ void *move_right(struct thread_args **argp) {
             tids->threads =(pthread_t *)realloc(tids->threads,sizeof ( pthread_t )*(tids->thread_count+1)) ;
             if(tids==NULL)
                 printf("error with realloc");
-
-            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_up, &args);
+            //usleep(SECOND);
+            struct thread_args *args_copy = malloc(sizeof *args);
+            args_copy->maze = args->maze;
+            args_copy->x_pos = args->x_pos;
+            args_copy->y_pos = args->y_pos;
+            args_copy->width = args->width;
+            args_copy->height = args->height;
+            memcpy(args_copy,args,sizeof(args));
+            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_up, &args_copy);
             if (err != 0)
                 printf("\ncan't create thread :[%s]", strerror(err));
             /*else
@@ -222,7 +245,16 @@ void *move_right(struct thread_args **argp) {
             tids->threads =(pthread_t *)realloc(tids->threads,sizeof ( pthread_t )*(tids->thread_count+1)) ;
             if(tids==NULL)
                 printf("error with realloc");
-            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_down, &args);
+
+            //usleep(SECOND);
+            struct thread_args *args_copy = malloc(sizeof *args);
+            args_copy->maze = args->maze;
+            args_copy->x_pos = args->x_pos;
+            args_copy->y_pos = args->y_pos;
+            args_copy->width = args->width;
+            args_copy->height = args->height;
+            memcpy(args_copy,args,sizeof(args));
+            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_down, &args_copy);
             if (err != 0)
                 printf("\ncan't create thread :[%s]", strerror(err));
             /*else
@@ -280,7 +312,16 @@ void *move_up(struct thread_args **argp) {
             if(tids==NULL)
                 printf("error with realloc");
 
-            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_left, &args);
+            //usleep(SECOND);
+
+            struct thread_args *args_copy = malloc(sizeof *args);
+            args_copy->maze = args->maze;
+            args_copy->x_pos = args->x_pos;
+            args_copy->y_pos = args->y_pos;
+            args_copy->width = args->width;
+            args_copy->height = args->height;
+            memcpy(args_copy,args,sizeof(args));
+            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_left, &args_copy);
             if (err != 0)
                 printf("\ncan't create thread :[%s]", strerror(err));
             /*else
@@ -300,7 +341,16 @@ void *move_up(struct thread_args **argp) {
             tids->threads =(pthread_t *)realloc(tids->threads,sizeof ( pthread_t )*(tids->thread_count+1)) ;
             if(tids==NULL)
                 printf("error with realloc");
-            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_right, &args);
+
+            //usleep(SECOND);
+            struct thread_args *args_copy = malloc(sizeof *args);
+            args_copy->maze = args->maze;
+            args_copy->x_pos = args->x_pos;
+            args_copy->y_pos = args->y_pos;
+            args_copy->width = args->width;
+            args_copy->height = args->height;
+            memcpy(args_copy,args,sizeof(args));
+            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_right, &args_copy);
             if (err != 0)
                 printf("\ncan't create thread :[%s]", strerror(err));
             /*else
@@ -357,7 +407,16 @@ void *move_left(struct thread_args **argp) {
             if(tids==NULL)
                 printf("error with realloc");
 
-            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_up, &args);
+
+            //usleep(SECOND);
+            struct thread_args *args_copy = malloc(sizeof *args);
+            args_copy->maze = args->maze;
+            args_copy->x_pos = args->x_pos;
+            args_copy->y_pos = args->y_pos;
+            args_copy->width = args->width;
+            args_copy->height = args->height;
+            memcpy(args_copy,args,sizeof(args));
+            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_up, &args_copy);
             if (err != 0)
                 printf("\ncan't create thread :[%s]", strerror(err));
             /*else
@@ -378,7 +437,15 @@ void *move_left(struct thread_args **argp) {
             if(tids==NULL)
                 printf("error with realloc");
 
-            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_down, &args);
+            //usleep(SECOND);
+            struct thread_args *args_copy = malloc(sizeof *args);
+            args_copy->maze = args->maze;
+            args_copy->x_pos = args->x_pos;
+            args_copy->y_pos = args->y_pos;
+            args_copy->width = args->width;
+            args_copy->height = args->height;
+            memcpy(args_copy,args,sizeof(args));
+            err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_down, &args_copy);
             if (err != 0)
                 printf("\ncan't create thread :[%s]", strerror(err));
             /*else
@@ -403,7 +470,8 @@ void gotoxy(int x,int y){
 
 
 
-int main(int argc, char *argv[]) {
+//int main(int argc, char *argv[]) {
+int main(void ) {
     /* Intializes random number generator */
     srand(time(0));
 
@@ -455,13 +523,15 @@ int main(int argc, char *argv[]) {
     args->x_pos = 0;
     args->y_pos = 0;
     //move_down(&args);
+    //pthread_mutex_lock(&lock); // Stop thread from getting the mutex
     err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_down, &args);
     if (err != 0)
         printf("\ncan't create thread :[%s]", strerror(err));
-    else
-        printf("\n Thread %d created successfully\n",tids->thread_count);
+    /*else
+        printf("\n Thread %d created successfully\n",tids->thread_count);*/
     tids->thread_count++;
-    pthread_join(tids->threads[tids->thread_count], NULL);
+    //pthread_mutex_unlock(&lock); // Let the thread run for a while
+    //pthread_join(tids->threads[tids->thread_count], NULL);
 
     //move_right(bytes, 8, 8, 0, 7);
     //move_up(bytes, 8, 8, 4, 8); //(x_pos - 1) (y_pos - 1)
@@ -476,7 +546,7 @@ int main(int argc, char *argv[]) {
         i++;
     }
     pthread_mutex_destroy(&lock);
-    show_maze(bytes, 8, 8);
+    //show_maze(bytes, 8, 8);
     free(bytes);
     return 0;
 }
