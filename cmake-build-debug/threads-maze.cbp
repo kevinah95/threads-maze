@@ -84,7 +84,7 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/kevinah95/CLionProjects/threads-maze/test03/refactor_maze.c">
+		<Unit filename="/home/kevinah95/CLionProjects/threads-maze/test03/refactor_great_maze.c">
 			<Option target="threads-maze"/>
 		</Unit>
 		<Unit filename="/home/kevinah95/CLionProjects/threads-maze/CMakeLists.txt">
