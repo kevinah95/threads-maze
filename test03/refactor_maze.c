@@ -74,27 +74,35 @@ void show_maze(const char *maze, int width, int height) {
 void move(char *maze, int width, int height, pointer_t pointer) {
     int x = pointer->x_pos;
     int y = pointer->y_pos;
-    char randomletter = 'a' + (random() % 26);
     //-------------
     int left = (pointer->x_pos > 0) ? (pointer->x_pos - 1) : pointer->x_pos;
     int right = (pointer->x_pos < width - 1) ? (pointer->x_pos + 1) : pointer->x_pos;
     int up = (pointer->y_pos > 0) ? (pointer->y_pos - 1) : pointer->y_pos;
     int down = (pointer->y_pos < height - 1) ? (pointer->y_pos + 1) : pointer->y_pos;
-    //-------------
-    int rand_num =  rand_interval(0,7);
+
+    if(pointer->direction_old != pointer->direction_new){
+        int rand_num =  rand_interval(0,7);
+        char randomletter = 'a' + (random() % 26);
+        pointer->color = rand_num;
+        pointer->character = randomletter;
+    }
     //--------for
     if (maze[x + width * y] == ' ') {
-        maze[x + width * y] = randomletter;
+        maze[x + width * y] = pointer->character;
         gotoxy(x,y);
-        PRINTC (rand_num, "%c", maze[x + width * y]);
+        PRINTC (pointer->color, "%c", maze[x + width * y]);
     } else {
         return;
     }
+
+
     char left_flag = maze[left + width * y];
     if (left_flag == ' ') {
         //printf(" CREATE_LEFT:%d %d", x, y);
         pointer->x_pos = left;
         pointer->y_pos = y;
+        pointer->direction_old = pointer->direction_new;
+        pointer->direction_new = WEST;
         move(maze, width, height, pointer);
     }
 
@@ -103,6 +111,8 @@ void move(char *maze, int width, int height, pointer_t pointer) {
         //printf(" CREATE_RIGHT:%d %d", x, y);
         pointer->x_pos = right;
         pointer->y_pos = y;
+        pointer->direction_old = pointer->direction_new;
+        pointer->direction_new = EAST;
         move(maze, width, height, pointer);
     }
     char up_flag = maze[x + width * up];
@@ -110,6 +120,8 @@ void move(char *maze, int width, int height, pointer_t pointer) {
         //printf(" CREATE_UP:%d %d", x, y);
         pointer->x_pos = x;
         pointer->y_pos = up;
+        pointer->direction_old = pointer->direction_new;
+        pointer->direction_new = NORTH;
         move(maze, width, height, pointer);
     }
 
@@ -118,6 +130,8 @@ void move(char *maze, int width, int height, pointer_t pointer) {
         //printf(" CREATE_DOWN:%d %d", x, y);
         pointer->x_pos = x;
         pointer->y_pos = down;
+        pointer->direction_old = pointer->direction_new;
+        pointer->direction_new = SOUTH;
         move(maze, width, height, pointer);
     }
 }
@@ -131,7 +145,7 @@ void gotoxy(int x,int y){
     printf("%c[%d;%df",0x1B,y,x);
 }
 
-int main(int argc, char *argv[]) {
+int main(void) {
     /* Intializes random number generator */
     srand(time(0));
 

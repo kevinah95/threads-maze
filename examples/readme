@@ -1,3 +1,0 @@
-gcc -o hello-pthread hello-pthread.c -lpthread #compile
-ls hello-pthread.c hello-pthread  #verify
-./hello-pthread #run
