@@ -12,7 +12,6 @@
 #define SECOND 1*MILLISECOND //1000*MILLISECOND <- One Second
 
 #define clear() printf("\033[H\033[J")
-#define gotoxy(x,y) printf("\033[%d;%dH", (x), (y))
 
 typedef struct Threads {
     pthread_t *threads;
@@ -66,18 +65,12 @@ void* doSomeThing(int *pId)
     return NULL;
 }
 
-void goto2xy(int x,int y){
-printf("%c[%d;%df",0x1B,y,x);
-}
-
 
 
 int main(void)
 {
     int i = 0;
     int err;
-
-    int thread_counter=0;
 
     tids=(thread_pool *)malloc(1 * sizeof(thread_pool ));
     tids->threads=(pthread_t *)malloc(1 * sizeof(pthread_t ));
@@ -97,7 +90,7 @@ int main(void)
             if(tids==NULL)
                 printf("error with realloc");
         }
-        err = pthread_create(&(tids->threads[i]), NULL, &doSomeThing, tids->thread_count);
+        err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &doSomeThing, tids->thread_count);
         if (err != 0)
             printf("\ncan't create thread :[%s]", strerror(err));
         else
@@ -117,23 +110,5 @@ int main(void)
 
     pthread_mutex_destroy(&lock);
 
-    printf("-----------------...\n");
-    printf("-----------------...\n");
-    int number;
-
-    clear();
-    printf(
-            "Enter your number in the box below\n"
-                    "+-----------------+\n"
-                    "|                 |\n"
-                    "+-----------------+\n"
-    );
-    //printf("\033[2A"); // Move up X lines;
-    //printf("\033[1C"); // Move right X column;
-    //scanf("%d", &number);
-    //printf("asdasd");
-    printf("Hello, I am going to use gotoxy");
-    goto2xy(5, 4);
-    printf("123");
     return 0;
 }

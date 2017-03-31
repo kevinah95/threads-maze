@@ -13,6 +13,22 @@
 #define clear() printf("\033[H\033[J")
 
 
+typedef struct Threads {
+    pthread_t *threads;
+    int thread_count;
+} thread_pool;
+
+typedef struct arg_struct {
+    char *maze;
+    int width;
+    int height;
+    int x_pos;
+    int y_pos;
+}args_t;
+
+thread_pool *tids;
+
+
 unsigned int rand_interval(unsigned int min, unsigned int max) {
     int r;
     const unsigned int range = 1 + max - min;
@@ -32,7 +48,7 @@ unsigned int rand_interval(unsigned int min, unsigned int max) {
 
 
 /* Display the maze. */
-void show_maze(const char *maze, int width, int height) {
+void* show_maze(const char *maze, int width, int height) {
     int x, y;
     clear();
     for (y = 0; y < height; y++) {
@@ -52,7 +68,11 @@ void show_maze(const char *maze, int width, int height) {
     }
 }
 
-void move_down(char *maze, int width, int height, int x_pos, int y_pos) {
+void* move_down(args_t *args) {
+    int width = (args->width);
+    int height = (args->height);
+    int x_pos = (args->x_pos);
+    int y_pos = (args->y_pos);
     int x = x_pos;
     int y = y_pos;
     char randomletter = 'a' + (random() % 26);
@@ -62,28 +82,32 @@ void move_down(char *maze, int width, int height, int x_pos, int y_pos) {
     //-------------
     int rand_num =  rand_interval(0,7);
     for (y; y < height; y++) {
-        if (maze[x + width * y] == ' ') {
-            maze[x + width * y] = randomletter;
+        if (args->maze[x + width * y] == ' ') {
+            args->maze[x + width * y] = randomletter;
             gotoxy(x,y);
-            PRINTC (rand_num, "%c", maze[x + width * y]);
+            PRINTC (rand_num, "%c", args->maze[x + width * y]);
         } else {
-            return;
+            return NULL;
         }
-        char left_flag = maze[left + width * y];
+        char left_flag = args->maze[left + width * y];
         if (left_flag == ' ') {
             //printf(" CREATE_LEFT:%d %d", x, y);
-            move_left(maze, width, height, left, y);
+            move_left(args->maze, width, height, left, y);
         }
 
-        char right_flag = maze[right + width * y];
+        char right_flag = args->maze[right + width * y];
         if (right_flag == ' ') {
             //printf(" CREATE_RIGHT:%d %d", x, y);
-            move_right(maze, width, height, right, y);
+            move_right(args);
         }
     }
 }
 
-void move_right(char *maze, int width, int height, int x_pos, int y_pos) {
+void* move_right(args_t *args) {
+    int width = (args->width);
+    int height = (args->height);
+    int x_pos = (args->x_pos);
+    int y_pos = (args->y_pos);
     int x = x_pos;
     int y = y_pos;
     char randomletter = 'a' + (random() % 26);
@@ -93,28 +117,32 @@ void move_right(char *maze, int width, int height, int x_pos, int y_pos) {
     //-------------
     int rand_num =  rand_interval(0,7);
     for (x; x < width; x++) {
-        if (maze[x + width * y] == ' ') {
-            maze[x + width * y] = randomletter;
+        if (args->maze[x + width * y] == ' ') {
+            args->maze[x + width * y] = randomletter;
             gotoxy(x,y);
-            PRINTC (rand_num, "%c", maze[x + width * y]);
+            PRINTC (rand_num, "%c", args->maze[x + width * y]);
         } else {
-            return;
+            return NULL;
         }
-        char up_flag = maze[x + width * up];
+        char up_flag = args->maze[x + width * up];
         if (up_flag == ' ') {
             //printf(" CREATE_UP:%d %d", x, y);
-            move_up(maze, width, height, x, up);
+            move_up(args->maze, width, height, x, up);
         }
 
-        char down_flag = maze[x + width * down];
+        char down_flag = args->maze[x + width * down];
         if (down_flag == ' ') {
             //printf(" CREATE_DOWN:%d %d", x, y);
-            move_down(maze, width, height, x, down);
+            move_down(args);
         }
     }
 }
 
-void move_up(char *maze, int width, int height, int x_pos, int y_pos) {
+void* move_up(char *maze, int *p_width, int *p_height, int *p_x_pos, int *p_y_pos) {
+    int width = *(p_width);
+    int height = *(p_height);
+    int x_pos = *(p_x_pos);
+    int y_pos = *(p_y_pos);
     int x = x_pos;
     char randomletter = 'a' + (random() % 26);
     //-------------
@@ -130,7 +158,7 @@ void move_up(char *maze, int width, int height, int x_pos, int y_pos) {
         } else {
             //show_maze(maze, 8, 8);
 
-            return;
+            return NULL;
         }
         char left_flag = maze[left + width * y];
         if (left_flag == ' ') {
@@ -146,7 +174,11 @@ void move_up(char *maze, int width, int height, int x_pos, int y_pos) {
     }
 }
 
-void move_left(char *maze, int width, int height, int x_pos, int y_pos) {
+void* move_left(char *maze, int *p_width, int *p_height, int *p_x_pos, int *p_y_pos) {
+    int width = *(p_width);
+    int height = *(p_height);
+    int x_pos = *(p_x_pos);
+    int y_pos = *(p_y_pos);
     int y = y_pos;
     char randomletter = 'a' + (random() % 26);
     //-------------
@@ -160,7 +192,7 @@ void move_left(char *maze, int width, int height, int x_pos, int y_pos) {
             gotoxy(x,y);
             PRINTC (rand_num, "%c", maze[x + width * y]);
         } else {
-            return;
+            return NULL;
         }
         char up_flag = maze[x + width * up];
         if (up_flag == ' ') {
@@ -182,9 +214,16 @@ void gotoxy(int x,int y){
     printf("%c[%d;%df",0x1B,y,x);
 }
 
+
 int main(int argc, char *argv[]) {
     /* Intializes random number generator */
     srand(time(0));
+
+    int err;
+    int width = 0;
+    int height = 0;
+    int x = 0;
+    int y = 0;
 
 
     FILE *f = fopen("examples/maze.txt", "rb");
@@ -203,13 +242,40 @@ int main(int argc, char *argv[]) {
         int len = strlen(bytes);
         memcpy(temp, temp + 1, len);
     }
+
+    //----threads
+    tids=(thread_pool *)malloc(1 * sizeof(thread_pool ));
+    tids->threads=(pthread_t *)malloc(1 * sizeof(pthread_t ));
+    tids->thread_count = 0;
+
+    tids->threads =(pthread_t *)realloc(tids->threads,sizeof ( pthread_t )*(tids->thread_count+1)) ;
+    if(tids==NULL)
+        printf("error with realloc");
+    args_t *args;
+    args->maze = bytes;
+    args->width = width;
+    args->height = height;
+    args->x = x;
+    args->y = y;
+    err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_down,args);
+    if (err != 0)
+        printf("\ncan't create thread :[%s]", strerror(err));
+    else
+        printf("\n Thread %d created successfully\n",tids->thread_count);
+
+    tids->thread_count++;
+
     show_maze(bytes, 8, 8);
-    move_down(bytes, 8, 8, 0, 0);
-    //move_right(bytes, 8, 8, 0, 7);
-    //move_up(bytes, 8, 8, 4, 8); //(x_pos - 1) (y_pos - 1)
-    //move_left(bytes, 8, 8, 2, 7); //(x_pos - 1) (y_pos - 1)
-    //---printf("\n");
-    //show_maze(bytes, 8, 8);
+    //move_down(bytes, 8, 8, 0, 0);
+
+    int i = 0;
+    while(i < tids->thread_count)
+    {
+        pthread_join(tids->threads[i], NULL);
+        pthread_join(tids->threads[i], NULL);
+        i++;
+    }
+
     printf("\n\n"); //Don't Remove
     free(bytes);
     return 0;
