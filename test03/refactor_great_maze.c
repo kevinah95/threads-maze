@@ -29,6 +29,13 @@ unsigned int rand_interval(unsigned int min, unsigned int max) {
     return min + (r / buckets);
 }
 
+typedef struct Threads {
+    pthread_t *threads;
+    int thread_count;
+} thread_pool;
+
+thread_pool *tids;
+
 
 
 /* Display the maze. */
@@ -62,7 +69,7 @@ struct thread_args {
     int y_pos;
 };
 
-void move_down(struct thread_args **argp) {
+void *move_down(struct thread_args **argp) {
     struct thread_args *args = *argp;
     int x = args->x_pos;
     int y = args->y_pos;
@@ -78,7 +85,7 @@ void move_down(struct thread_args **argp) {
             gotoxy(x,y);
             PRINTC (rand_num, "%c", args->maze[x + args->width * y]);
         } else {
-            return;
+            return NULL;
         }
         char left_flag = args->maze[left + args->width * y];
         if (left_flag == ' ') {
@@ -242,6 +249,16 @@ int main(int argc, char *argv[]) {
     }
     show_maze(bytes, 8, 8);
     //---------
+    int err;
+
+    tids=(thread_pool *)malloc(1 * sizeof(thread_pool ));
+    tids->threads=(pthread_t *)malloc(1 * sizeof(pthread_t ));
+    tids->thread_count = 0;
+    tids->threads =(pthread_t *)realloc(tids->threads,sizeof ( pthread_t )*(tids->thread_count+1)) ;
+    if(tids==NULL)
+        printf("error with realloc");
+
+    //----------
     struct thread_args *args = malloc(sizeof *args);
     //args = (args_t *)malloc(1 * sizeof(args_t ));
     args->maze = bytes;
@@ -250,12 +267,25 @@ int main(int argc, char *argv[]) {
     args->x_pos = 0;
     args->y_pos = 0;
     move_down(&args);
+    err = pthread_create(&(tids->threads[tids->thread_count]), NULL, &move_down, &args);
+    if (err != 0)
+        printf("\ncan't create thread :[%s]", strerror(err));
+    else
+        printf("\n Thread %d created successfully\n",tids->thread_count);
+    tids->thread_count++;
+
     //move_right(bytes, 8, 8, 0, 7);
     //move_up(bytes, 8, 8, 4, 8); //(x_pos - 1) (y_pos - 1)
     //move_left(bytes, 8, 8, 2, 7); //(x_pos - 1) (y_pos - 1)
     //---printf("\n");
     //show_maze(bytes, 8, 8);
     printf("\n\n"); //Don't Remove
+    int i = 0;
+    while(i < tids->thread_count)
+    {
+        pthread_join(tids->threads[i], NULL);
+        i++;
+    }
     free(bytes);
     return 0;
 }
