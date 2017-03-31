@@ -81,6 +81,7 @@ void *move_up(struct thread_args **argp);
 
 
 void *move_down(struct thread_args **argp) {
+    pthread_mutex_lock(&lock);
     struct thread_args *args = *argp;
     int x = args->x_pos;
     int y = args->y_pos;
@@ -92,14 +93,19 @@ void *move_down(struct thread_args **argp) {
     //-------------
     int rand_num =  rand_interval(0,7);
     for (y; y < args->height; y++) {
+
         if (args->maze[x + args->width * y] == ' ') {
             args->maze[x + args->width * y] = randomletter;
             gotoxy(x,y);
             PRINTC (rand_num, "%c", args->maze[x + args->width * y]);
+            fflush(stdout);
+            usleep(SECOND);
         } else {
 
             return NULL;
         }
+
+
         char left_flag = args->maze[left + args->width * y];
         if (left_flag == ' ') {
             //printf(" CREATE_LEFT:%d %d", x, y);
@@ -138,13 +144,17 @@ void *move_down(struct thread_args **argp) {
             tids->thread_count++;
             pthread_join(tids->threads[tids->thread_count], NULL);
         }
+
     }
+
+
+    pthread_mutex_unlock(&lock);
 
     return NULL;
 }
 
 void *move_right(struct thread_args **argp) {
-
+    pthread_mutex_lock(&lock);
     struct thread_args *args = *argp;
     int x = args->x_pos;
     int y = args->y_pos;
@@ -156,13 +166,17 @@ void *move_right(struct thread_args **argp) {
     //-------------
     int rand_num =  rand_interval(0,7);
     for (x; x < args->width; x++) {
+
         if (args->maze[x + args->width * y] == ' ') {
             args->maze[x + args->width * y] = randomletter;
             gotoxy(x,y);
             PRINTC (rand_num, "%c", args->maze[x + args->width * y]);
+            fflush(stdout);
+            usleep(SECOND);
         } else {
             return NULL;
         }
+
         char up_flag = args->maze[x + args->width * up];
         if (up_flag == ' ') {
             //printf(" CREATE_UP:%d %d", x, y);
@@ -201,11 +215,13 @@ void *move_right(struct thread_args **argp) {
         }
     }
 
+    pthread_mutex_unlock(&lock);
+
     return NULL;
 }
 
 void *move_up(struct thread_args **argp) {
-
+    pthread_mutex_lock(&lock);
     struct thread_args *args = *argp;
     int x = args->x_pos;
     int err;
@@ -216,10 +232,13 @@ void *move_up(struct thread_args **argp) {
     //-------------
     int rand_num =  rand_interval(0,7);
     for (unsigned y = args->y_pos+1; y-- > 0;) {
+
         if (args->maze[x + args->width * y] == ' ') {
             args->maze[x + args->width * y] = randomletter;
             gotoxy(x,y);
             PRINTC (rand_num, "%c", args->maze[x + args->width * y]);
+            fflush(stdout);
+            usleep(SECOND);
         } else {
             //show_maze(maze, 8, 8);
 
@@ -264,12 +283,12 @@ void *move_up(struct thread_args **argp) {
         }
     }
 
-
+    pthread_mutex_unlock(&lock);
     return NULL;
 }
 
 void *move_left(struct thread_args **argp) {
-
+    pthread_mutex_lock(&lock);
     struct thread_args *args = *argp;
     int y = args->y_pos;
     int err;
@@ -280,14 +299,18 @@ void *move_left(struct thread_args **argp) {
     //-------------
     int rand_num =  rand_interval(0,7);
     for (unsigned x = args->x_pos+1; x-- > 0;) {
+
         if (args->maze[x + args->width * y] == ' ') {
             args->maze[x + args->width * y] = randomletter;
             gotoxy(x,y);
             PRINTC (rand_num, "%c", args->maze[x + args->width * y]);
+            fflush(stdout);
+            usleep(SECOND);
         } else {
 
             return NULL;
         }
+
 
         char up_flag = args->maze[x + args->width * up];
         if (up_flag == ' ') {
@@ -329,6 +352,7 @@ void *move_left(struct thread_args **argp) {
         }
     }
 
+    pthread_mutex_unlock(&lock);
     return NULL;
 }
 
@@ -375,6 +399,14 @@ int main(int argc, char *argv[]) {
     if(tids==NULL)
         printf("error with realloc");
 
+    //MUTEX
+    if (pthread_mutex_init(&lock, NULL) != 0)
+    {
+        printf("\n mutex init failed\n");
+        return 1;
+    }
+    //
+
     //----------
     struct thread_args *args = malloc(sizeof *args);
     //args = (args_t *)malloc(1 * sizeof(args_t ));
@@ -398,12 +430,13 @@ int main(int argc, char *argv[]) {
     //---printf("\n");
     //show_maze(bytes, 8, 8);
     printf("\n\n"); //Don't Remove
-    /*int i = 0;
+    int i = 0;
     while(i < tids->thread_count)
     {
         pthread_join(tids->threads[i], NULL);
         i++;
-    }*/
+    }
+    pthread_mutex_destroy(&lock);
     free(bytes);
     return 0;
 }
